@@ -5,21 +5,105 @@ output:
     keep_md: true
 ---
 
+by Gabriel Espinosa
 
 ## Loading and preprocessing the data
+
+First, load the data in the environment. The code changes the column date from char to Date type.
+
+```{r loadData}
+  library(plyr)
+  activity <- read.csv(unzip("activity.zip"))
+  activity$date <- as.Date(activity$date)
+  str(activity)
+```
 
 
 
 ## What is mean total number of steps taken per day?
 
+First, the total Steps per day are reported.
+
+```{r sumSteps}
+
+```
+
+
+The next code generates the **histogram** which shows the total Steps per day.
+
+```{r histSteps}
+
+```
+
+
+Now, it calculates the **mean** and **median** of the total Steps per day.
+
+```{r summarySteps}
+
+```
+
 
 
 ## What is the average daily activity pattern?
+
+Here, the code draws the plot of 5-min interval steps taken (x-axis) and average of the steps taken across all days.
+
+```{r linePDailyPattern}
+
+```
+
+
+For the second part of the question, you can see the red point drawn by the next code, which indicates the 5-minutes interval with maximum (average) number of steps across all days.
+
+```{r pointMaxDailyPattern}
+
+```
 
 
 
 ## Imputing missing values
 
+First, the code reports the total number of missing values (**NA**) in the data set.
+
+```{r totalNA}
+
+```
+
+For the second part, I decided to use the mean of the 5-min interval across all days for imputing the data.  
+
+Now, it creates a new data set with the imputed data, as specify before.
+
+```{r newImputData}
+
+```
+
+
+It's time to draw an histogram of the new (**imput**) data set.
+
+```{r histImputData}
+
+```
+
+
+As it shows in this results, it differs from ...
+
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+For the last question, the next code creates a new column (variable) with two factors: *weekday* or *weekend*, this indicates that the date is in a "weekday" day or "weekend" day. 
+
+```{r createFactorData}
+library(lubridate)
+# wday(Sys.Date(), week_start = TRUE)
+```
+
+
+Finally, a line plot with the two factors, wih 5-min interval steps taken (x-axis) versus average of the steps taken across all days, of course, for each factor (*weekday/weekend days*).
+
+```{r plotWeekSteps}
+
+```
+
+Thanks for your attention.
+
