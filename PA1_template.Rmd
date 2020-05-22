@@ -18,7 +18,7 @@ library(ggplot2)
 library(lubridate)
 ```
 
-```{r loadData}
+```{r loadData, cache=TRUE}
 activity <- read.csv(unzip("activity.zip"))
 activity$date <- as.Date(activity$date)
 str(activity)
