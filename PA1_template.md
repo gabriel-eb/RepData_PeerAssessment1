@@ -32,7 +32,7 @@ str(activity)
 ##  $ date    : Date, format: "2012-10-01" "2012-10-01" ...
 ##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
 ```
-
+  
 
 
 ## What is mean total number of steps taken per day?
@@ -68,21 +68,13 @@ with(activity,tapply(steps, date, sum, na.rm = TRUE))
 ```r
 actDay <- activity %>% group_by(date) %>% summarise(totalsteps = sum(steps,na.rm = TRUE))
 actDay$date <- as.Date(actDay$date)
-ggplot(actDay,aes(date,totalsteps)) + geom_histogram(stat="identity")
-```
-
-```
-## Warning: Ignoring unknown parameters: binwidth, bins, pad
+ggplot(actDay,aes(date,totalsteps)) + geom_histogram(stat="identity")  + xlab("Date") + ylab("Total Steps") + ggtitle("Total Steps per day")
 ```
 
 ![](PA1_template_files/figure-html/sumSteps-1.png)<!-- -->
 
-```r
-# Faltan labels.
-```
 
-
-
+  
 Now, it calculates the **mean** and **median** of the total Steps per day.
 
 
@@ -107,7 +99,7 @@ activity %>% group_by(date) %>% summarise(meanSteps = mean(steps,na.rm = TRUE), 
 ## # ... with 51 more rows
 ```
 
-
+  
 
 ## What is the average daily activity pattern?
 
@@ -118,14 +110,18 @@ For the second part of the question, you can see the red point which indicates t
 ```r
 actInt <- activity %>% group_by(interval) %>% summarise(averageSteps = mean(steps,na.rm = TRUE))
 
-with(actInt,plot(interval,averageSteps,type="l"))
+with(actInt,plot(interval, averageSteps, type="l", main = "Average steps for 5-minutes interval across all days", xlab = "5-minute interval", ylab = "Average Steps", xaxt="n"))
+# Just adding format to x-axis.
+t <- format( seq.POSIXt(as.POSIXct(Sys.Date()), as.POSIXct(Sys.Date()+1), by = "5 min"),"%H:%M", tz="GMT")
+axis(1,seq(0,2355,by = 105),t[seq(1,288,by=13)],las=2)
+
 with(actInt,points(interval[which.max(averageSteps)],max(averageSteps), col="red", pch = 19))
 ```
 
 ![](PA1_template_files/figure-html/linePDailyPattern-1.png)<!-- -->
 
 ```r
-# Faltan labels
+# Max average steps: 
 with(actInt,interval[which.max(averageSteps)])
 ```
 
@@ -134,7 +130,7 @@ with(actInt,interval[which.max(averageSteps)])
 ```
 
 
-
+  
 ## Imputing missing values
 
 First, the code reports the total number of missing values (**NA**) in the data set. We can see in the result, the 2304 **NA** are in the *steps* column.
@@ -175,18 +171,15 @@ It's time to draw an histogram of the new (**imput**) data set.
 ```r
 actImputDay <- actImput %>% group_by(date) %>% summarise(totalSteps = sum(steps,na.rm = TRUE))
 actImputDay$date <- as.Date(actImputDay$date)
-ggplot(actImputDay,aes(date,totalSteps)) + geom_histogram(stat="identity")
-```
-
-```
-## Warning: Ignoring unknown parameters: binwidth, bins, pad
+ggplot(actImputDay,aes(date,totalSteps)) + 
+  geom_histogram(stat="identity") + 
+  xlab("Date") + ylab("Total Steps") + 
+  ggtitle("Total Steps per day (Imputed data)")
 ```
 
 ![](PA1_template_files/figure-html/histImputData-1.png)<!-- -->
 
 ```r
-# Faltan labels.
-
 actImput %>% group_by(date) %>% summarise(meanSteps = mean(steps), medianSteps = median(steps))
 ```
 
@@ -211,7 +204,7 @@ actImput %>% group_by(date) %>% summarise(meanSteps = mean(steps), medianSteps =
 As it shows in this results, the results really change for the days with **NaN mean**, thats because all the intervals that day are **NA**. With this imputing "technic", it's obviuos because I decided to round the values to a integer, i.e. the NA's in interval 0 (*00:00*) change to 2 steps, rounded from 1.7169.
 
 
-
+  
 ## Are there differences in activity patterns between weekdays and weekends?
 
 For the last question, the next code creates a new column (variable) with two factors: *weekday* or *weekend*, this indicates that the date is in a "weekday" day or "weekend" day. 
@@ -238,10 +231,16 @@ Finally, a line plot with the two factors, wih 5-min interval steps taken (x-axi
 ```r
 actWdayInt <- actWday %>% group_by(interval, weekday) %>% summarise(averageSteps = mean(steps,na.rm = TRUE))
 
-ggplot(actWdayInt,aes(interval,averageSteps)) + facet_grid(weekday~.) + geom_line()
+ggplot(actWdayInt,aes(interval,averageSteps, color=as.factor(weekday))) + 
+    facet_grid(weekday~.) + 
+    geom_line() + 
+    xlab("Average Steps") + 
+    ylab("5-minutes interval") + 
+    ggtitle("Average steps for 5-minutes interval on weekdays and weekend days") +
+    theme(legend.position = "none")
 ```
 
 ![](PA1_template_files/figure-html/plotWeekSteps-1.png)<!-- -->
-
-Thanks for your attention.
+  
+### Thanks for your attention.
 
